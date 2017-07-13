@@ -3,6 +3,9 @@ from flask import render_template
 from Algorithms.HoltWinters import HoltWinters
 import pandas as pd
 import numpy as np
+import os
+from settings import APP_STATIC
+import csv
 
 app = Flask(__name__)
 
@@ -23,8 +26,7 @@ def validater(result, test):
 
 
 def get_date():
-    data_file = open('data.csv')
-    data = pd.read_csv(data_file)
+    data = pd.read_csv(os.path.join(APP_STATIC, 'data.csv'))
     data["date"] = pd.to_datetime(data["date"])
     return data
 
