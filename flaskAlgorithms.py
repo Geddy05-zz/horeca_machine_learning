@@ -23,7 +23,7 @@ def validater(result, test):
 
 
 def get_date():
-    data_file = open('flaskAlgorithms/data.csv')
+    data_file = open('data.csv')
     data = pd.read_csv(data_file)
     data["date"] = pd.to_datetime(data["date"])
     return data
