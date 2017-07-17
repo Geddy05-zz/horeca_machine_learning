@@ -3,6 +3,7 @@ from flask import render_template
 from flask import Response
 import json
 from Algorithms.HoltWinters import HoltWinters
+from Algorithms.MultiLinearRegression import MultiLinearRegression
 import pandas as pd
 import numpy as np
 import os
@@ -57,6 +58,34 @@ def holt_winters():
     mape = mean_absolute_percentage_error(result, hw.test)
 
     data_response = {
+        'mse': mse,
+        'average': average_error,
+        'mae': mae,
+        'mape': mape
+
+    }
+
+    js = json.dumps(data_response)
+
+    resp = Response(js, status=200, mimetype='application/json')
+    return resp
+
+
+@app.route('/multi', methods=['GET'])
+def multi_linear_regression():
+
+    data = get_date()
+    mlr = MultiLinearRegression(data)
+    coef = mlr.fit_model()
+    result = mlr.predict()
+
+    mse = validater(result, data["sales"][-30:])
+    average_error = average(result, data["sales"][-30:])
+    mae = mean_absolute_error(result, data["sales"][-30:])
+    mape = mean_absolute_percentage_error(result, data["sales"][-30:])
+
+    data_response = {
+        'coef' :coef,
         'mse': mse,
         'average': average_error,
         'mae': mae,
