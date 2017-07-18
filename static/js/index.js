@@ -99,8 +99,6 @@ function holtWintersParameters(){
     $("#TableParams").html("");
     $.ajax({
         url: "/holt-winters-params",
-        cache: false,
-        async: false,
         success: function (html) {
             var results =html.all_better_results;
             for(var j = 0; j < results.length; j++){

@@ -1,10 +1,8 @@
 import warnings
 import itertools
 import pandas as pd
-import numpy as np
-from datetime import datetime
 import statsmodels.api as sm
-import matplotlib.pyplot as plt
+
 
 class Arima:
 
@@ -15,15 +13,14 @@ class Arima:
         self.data.index.name = None
 
         self.test = data[-30:]
-        self.test['index'] =data[-30:]['date']
+        self.test['index'] = data[-30:]['date']
         self.test.set_index(['index'], inplace=True)
         self.test.index.name = None
 
         self.model = None
 
     def grid_search(self, season_length):
-
-        print(sm.version)
+        """ Based on grid search we can choose the best parameters for fitting the ARIMA modell"""
 
         # Define the p, d and q parameters to take any value between 0 and 2
         p = d = q = range(0, 3)
@@ -52,6 +49,7 @@ class Arima:
                     continue
 
     def fit_model(self,season_length):
+        """" fit the model based on the params (1,1,2)(1,2,2)"""
         warnings.filterwarnings("ignore") # specify to ignore warning messages
         mod = sm.tsa.statespace.SARIMAX(self.data.sales,
                                         order=(1, 1, 2),
@@ -62,5 +60,7 @@ class Arima:
         self.model = mod.fit(disp=0)
 
     def predict(self, nr):
+        """ The function for prediction.
+        Must be executed after the fit_model function """
         pred = self.model.forecast(nr)
         return pred
