@@ -31,7 +31,7 @@ class Arima:
         # Generate all different combinations of seasonal p, q and q triplets
         seasonal_pdq = [(x[0], x[1], x[2], season_length) for x in list(itertools.product(p, d, q))]
 
-        warnings.filterwarnings("ignore") # specify to ignore warning messages
+        # warnings.filterwarnings("ignore") # specify to ignore warning messages
 
         for param in pdq:
             for param_seasonal in seasonal_pdq:
@@ -50,7 +50,7 @@ class Arima:
 
     def fit_model(self,season_length):
         """" fit the model based on the params (1,1,2)(1,2,2)"""
-        warnings.filterwarnings("ignore") # specify to ignore warning messages
+        # warnings.filterwarnings("ignore") # specify to ignore warning messages
         mod = sm.tsa.statespace.SARIMAX(self.data.sales,
                                         order=(1, 1, 2),
                                         seasonal_order=(1, 2, 2, season_length),
@@ -60,7 +60,5 @@ class Arima:
         self.model = mod.fit(disp=0)
 
     def predict(self, nr):
-        """ The function for prediction.
-        Must be executed after the fit_model function """
-        pred = self.model.forecast(nr)
-        return pred
+        """ The function for prediction. Must be executed after the fit_model function """
+        return self.model.forecast(nr)
