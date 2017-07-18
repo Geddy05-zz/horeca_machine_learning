@@ -99,6 +99,8 @@ function holtWintersParameters(){
     $("#TableParams").html("");
     $.ajax({
         url: "/holt-winters-params",
+        cache: false,
+        async: false,
         success: function (html) {
             var results =html.all_better_results;
             for(var j = 0; j < results.length; j++){
@@ -131,7 +133,6 @@ function ARIMA(){
     for(var i = 1; i < 11; i++) {
         $.ajax({
             url: "/arima",
-            cache: false,
             success: function (html) {
                 $("#TableResults").append(
                     "<tr>" +
