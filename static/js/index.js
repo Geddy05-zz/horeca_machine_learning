@@ -117,8 +117,41 @@ function holtWintersParameters(){
      });
 }
 
+function avg(average,mae, mape, mse) {
+    $("#average").html((average/10));
+    $("#mae").html((mae / 10));
+    $("#mape").html((mape/10));
+    $("#mse").html((mse/10));
+}
+
 function ARIMA(){
-    $("#SSE").html("");
+    $("#TableResults").html("");
+    var mse = 0;
+    var mape = 0;
+    var mae = 0;
+    var average = 0;
+    for(var i = 1; i < 11; i++) {
+        $.ajax({
+            url: "/arima",
+            cache: false,
+            success: function (html) {
+                $("#TableResults").append(
+                    "<tr>" +
+                        "<td>" + i + "</td>" +
+                        "<td>" + html.average + "</td>" +
+                        "<td>" + html.mae + "</td>" +
+                        "<td>" + html.mape + "</td>" +
+                        "<td>" + html.mse + "</td>" +
+                    "</tr>"
+                );
+                mse += html.mse;
+                mape += html.mape;
+                mae += html.mae;
+                average += html.average;
+                avg(average,mae,mape,mse);
+            }
+        });
+    }
 }
 
 function nn(){

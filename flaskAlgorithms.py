@@ -4,6 +4,7 @@ from flask import Response
 import json
 from Algorithms.HoltWinters import HoltWinters
 from Algorithms.MultiLinearRegression import MultiLinearRegression
+from Algorithms.ARIMA import Arima
 import pandas as pd
 import numpy as np
 import os
@@ -99,6 +100,31 @@ def multi_linear_regression():
     return resp
 
 
+@app.route('/arima', methods=['GET'])
+def arima():
+
+    data = get_date()
+    ar = Arima(data)
+    ar.fit_model(7)
+    result = ar.predict(30)
+
+    mse = validater(result.values, data["sales"][-30:].values)
+    average_error = average(result.values, data["sales"][-30:].values)
+    mae = mean_absolute_error(result.values, data["sales"][-30:].values)
+    mape = mean_absolute_percentage_error(result.values, data["sales"][-30:].values)
+
+    data_response = {
+        'mse': mse,
+        'average': average_error,
+        'mae': mae,
+        'mape': mape
+    }
+
+    js = json.dumps(data_response)
+
+    resp = Response(js, status=200, mimetype='application/json')
+    return resp
+
 @app.route('/')
 def hello_world():
     return render_template('index.html', error=0)
@@ -138,7 +164,7 @@ def mean_absolute_percentage_error(result, test):
 
 def get_date():
     data = pd.read_csv(os.path.join(APP_STATIC, 'data.csv'))
-    data["date"] = pd.to_datetime(data["date"])
+    data["date"] = pd.to_datetime(data["date"],format="%d/%m/%Y")
     return data
 
 
