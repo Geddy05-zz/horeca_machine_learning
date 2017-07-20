@@ -105,6 +105,7 @@ def arima():
 
     data = get_date()
     ar = Arima(data)
+    # ar.grid_search(7)
     ar.fit_model(7)
     result = ar.predict(30)
 

@@ -31,8 +31,8 @@ class MultiLinearRegression:
     def fit_model(self):
         model = smf.ols(formula='sales ~ holiday + d1+d2+d3+d4+d5+d6+ temp+ weather', data=self.train)
         self.results_formula = model.fit()
-        coeffiecent = self.results_formula.params
-        df = coeffiecent.tolist()
+        coefficient = self.results_formula.params
+        df = coefficient.tolist()
         return df
 
     def predict(self):

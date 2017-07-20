@@ -8,15 +8,15 @@ class Arima:
 
     def __init__(self,data):
         self.data = data[:-30]
+        self.test = data[-30:]
+
+        # for Arima the index must be a date
         self.data['index'] = pd.to_datetime(self.data['date'])
-        # self.data.rename(columns = {'date' : 'index'})
         self.data.set_index(['index'], inplace=True)
         self.data.index.name = None
 
-        self.test = data[-30:]
+        # for Arima the index must be a date
         self.test['index'] = self.test['date']
-        # self.test.rename(columns = {'date' : 'index'})
-
         self.test.set_index(['index'], inplace=True)
         self.test.index.name = None
 
@@ -36,13 +36,15 @@ class Arima:
 
         warnings.filterwarnings("ignore") # specify to ignore warning messages
 
+        # loop trough all the possible combinations
         for param in pdq:
             for param_seasonal in seasonal_pdq:
                 try:
                     mod = sm.tsa.statespace.SARIMAX(self.data.sales,
                                                     order=param,
+                                                    trend='t',
                                                     seasonal_order=param_seasonal,
-                                                    enforce_stationarity=False,
+                                                    enforce_stationarity=True,
                                                     enforce_invertibility=False)
 
                     results = mod.fit(disp=0)
@@ -55,9 +57,10 @@ class Arima:
         """" fit the model based on the params (1,1,2)(1,2,2)"""
         warnings.filterwarnings("ignore") # specify to ignore warning messages
         mod = sm.tsa.statespace.SARIMAX(self.data.sales,
-                                        order=(1, 1, 2),
-                                        seasonal_order=(1, 2, 2, season_length),
-                                        enforce_stationarity=False,
+                                        trend='t',
+                                        order=(0, 1, 2),
+                                        seasonal_order=(0, 2, 2, season_length),
+                                        enforce_stationarity=True,
                                         enforce_invertibility=False)
 
         self.model = mod.fit(disp=0)
