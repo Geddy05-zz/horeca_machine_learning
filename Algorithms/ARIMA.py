@@ -36,7 +36,7 @@ class Arima:
 
         warnings.filterwarnings("ignore") # specify to ignore warning messages
 
-        # loop trough all the possible combinations
+        # loop trough all the possible combinations this called grid-search
         for param in pdq:
             for param_seasonal in seasonal_pdq:
                 try:

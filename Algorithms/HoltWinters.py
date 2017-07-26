@@ -5,7 +5,7 @@ class HoltWinters:
         self.train = data[:-30].values
         self.test = data[-30:].values
 
-    # Moving average using n last points
+    # Moving average using last n points
     def average(self, n=None):
 
         if n is None:
@@ -82,12 +82,12 @@ class HoltWinters:
         # compute season averages
         for j in range(n_seasons):
 
-            # calculate te average of each point in all the seasons
+            # Calculate te average of each point in all the seasons
             season_averages.append(
                 sum(self.train[season_length * j:season_length * j + season_length]) / float(season_length)
             )
 
-        # compute initial values
+        # Compute initial values
         for i in range(season_length):
             sum_of_vals_over_avg = 0.0
             for j in range(n_seasons):
@@ -100,24 +100,30 @@ class HoltWinters:
     # Return series of smoothed points
     def triple_exponential_smoothing(self, slen, alpha, beta, gamma, n_preds):
         result = []
+        smooth = 0
+        trend = 0
+
+        # First get the seasonal components
         seasonals = self.initial_seasonal_components(slen)
 
+        # For every point in the data recalculate the trend
+        # and add the predicted value of that point to a result list
         for i in range(len(self.train) + n_preds):
 
-            # initial values
+            # Initial values
             if i == 0:
                 smooth = self.train[0]
                 trend = self.initial_trend(slen)
                 result.append(self.train[0])
                 continue
 
-            # we are forecasting
+            # We are forecasting
             if i >= len(self.train):
                 m = i - len(self.train) + 1
                 result.append((smooth + m * trend) + seasonals[i % slen])
                 continue
 
-            # the complete Holt-Winters formula see documentation
+            # The complete Holt-Winters formula see documentation
             val = self.train[i]
             last_smooth, smooth = smooth, alpha * (val - seasonals[i % slen]) + (1 - alpha) * (smooth + trend)
             trend = beta * (smooth - last_smooth) + (1 - beta) * trend
